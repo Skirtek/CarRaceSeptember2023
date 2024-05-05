@@ -3,7 +3,7 @@ package com.codecool.vehicles;
 import com.codecool.race.Race;
 import com.codecool.utils.RandomEvents;
 
-public class Car extends Vehicle {
+public class Car extends Vehicle implements YellowFlagDependent {
     private static final int MIN_SPEED = 80;
 
     private static final int MAX_SPEED = 110;
@@ -37,9 +37,16 @@ public class Car extends Vehicle {
         return firstPart + " " + secondPart;
     }
 
-    /** If yellow flag is up, car should go with YELLOW_FLAG_SPEED, otherwise with normal speed */
+    /**
+     * If yellow flag is up, car should go with YELLOW_FLAG_SPEED, otherwise with normal speed
+     */
     @Override
-    public void prepareForLap(Race race) {
-        actualSpeed = race.isYellowFlagActive() ? YELLOW_FLAG_SPEED : normalSpeed;
+    public void prepareForLap() {
+        //actualSpeed = calculateSpeed()
+    }
+
+    @Override
+    public int calculateSpeed(boolean isYellowFlagActive) {
+        return actualSpeed = isYellowFlagActive ? YELLOW_FLAG_SPEED : normalSpeed;
     }
 }

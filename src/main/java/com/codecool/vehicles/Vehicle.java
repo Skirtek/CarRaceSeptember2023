@@ -32,7 +32,7 @@ public abstract class Vehicle {
     public abstract String generateName();
 
     // TODO Do it better with interface for example
-    public abstract void prepareForLap(Race race);
+    public abstract void prepareForLap();
 
     public void moveForAnHour() {
         //distanceTraveled = actualSpeed + distanceTraveled;

@@ -18,7 +18,11 @@ public class Truck extends Vehicle {
 
     private int breakdownLapsLeft = 0;
 
-    private boolean isTruckBroken;
+    private TruckState state = TruckState.RUNNING;
+
+    public boolean isTruckBroken() {
+        return state != TruckState.RUNNING;
+    }
 
     public Truck() {
         super(NORMAL_SPEED);
@@ -32,31 +36,30 @@ public class Truck extends Vehicle {
 
     /***/
     @Override
-    public void prepareForLap(Race race) {
-        isTruckBroken = getIsTruckBroken();
-
-        actualSpeed = isTruckBroken ? BROKEN_TRUCK_SPEED : NORMAL_SPEED;
+    public void prepareForLap() {
+        state = getNextState();
+        actualSpeed = isTruckBroken() ? BROKEN_TRUCK_SPEED : NORMAL_SPEED;
     }
 
-    public boolean isTruckBroken() {
-        return isTruckBroken;
-    }
+    private TruckState getNextState() {
+        switch (state) {
+            case RUNNING -> {
+                boolean willTruckBeBroke = RandomEvents.shouldEventHappen(BREAKDOWN_CHANCE_PERCENT);
 
-    // TODO Do it with enums
-    private boolean getIsTruckBroken() {
-        if (!isTruckBroken) {
-            boolean willTruckBeBroke = RandomEvents.shouldEventHappen(BREAKDOWN_CHANCE_PERCENT);
-
-            if (willTruckBeBroke) {
-                breakdownLapsLeft = LAPS_TO_FIX;
-                return true;
-            } else {
-                return false;
+                if (willTruckBeBroke) {
+                    breakdownLapsLeft = LAPS_TO_FIX;
+                    return TruckState.BROKEN;
+                }
             }
-        } else {
-            breakdownLapsLeft--;
+            case BROKEN -> {
+                breakdownLapsLeft--;
 
-            return breakdownLapsLeft <= 0;
+                if (breakdownLapsLeft > 0) {
+                    return TruckState.BROKEN;
+                }
+            }
         }
+
+        return TruckState.RUNNING;
     }
 }
